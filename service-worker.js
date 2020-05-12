@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/goit-react-hw-02-phonebook/precache-manifest.9236f50950ffca0e653d537c595ea09f.js"
+  "/goit-react-hw-03-phonebook/precache-manifest.163ce40ebf22c7dcb9afadf3554ef606.js"
 );
 
 workbox.clientsClaim();
@@ -28,7 +28,7 @@ self.__precacheManifest = [].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-workbox.routing.registerNavigationRoute("/goit-react-hw-02-phonebook/index.html", {
+workbox.routing.registerNavigationRoute("/goit-react-hw-03-phonebook/index.html", {
   
   blacklist: [/^\/_/,/\/[^/]+\.[^/]+$/],
 });
