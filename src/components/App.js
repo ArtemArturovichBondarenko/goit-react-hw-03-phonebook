@@ -1,92 +1,92 @@
-import React, { Component } from 'react';
-import SearchBar from './Searchbar/Searchbar';
-import ImageGallery from './ImageGallery/ImageGallery';
-import Button from './Button/Button';
-import Loader from './Loader/Loader';
-import Modal from './Modal/Modal';
-import styles from './App.module.css';
-import * as imageAPI from '../services/image-api';
+import React, { Component, createContext } from 'react';
+import ContactForm from './ContactForm/ContactForm';
+import ContactList from './ContactList/ContactList';
+import Filter from './Filter/Filter';
+import { v4 as uuidv4 } from 'uuid';
+
+const filterContacts = (contacts, filter) => {
+  return contacts.filter(contact =>
+    contact.name.toLowerCase().includes(filter.toLowerCase()),
+  );
+};
 
 export default class App extends Component {
   state = {
-    images: [],
-    query: '',
-    page: 1,
-    isLOading: false,
-    isModal: false,
-    idImage: '',
+    contacts: [
+      { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
+      { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
+      { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
+      { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
+    ],
+    filter: '',
   };
+  componentDidMount() {
+    const persistContacts = localStorage.getItem('contacts');
 
-  componentDidUpdate(prevProps, prevState) {
-    const { query, page } = this.state;
-    if (prevState.page !== page || prevState.query !== query) {
-      if (query !== '') {
-        this.fetchImages();
+    if (persistContacts) {
+      try {
+        const contacts = JSON.parse(persistContacts);
+        this.setState({ contacts });
+      } catch (error) {
+        console.log(error);
       }
     }
   }
 
-  fetchImages = () => {
-    const { images, query, page } = this.state;
-    const scroll = document.documentElement.scrollHeight;
-    const scrollHeight = page > 1 ? scroll : 0;
-    this.setState({ isLOading: true });
-    imageAPI
-      .fetchImages(query, page)
-      .then(({ data }) => {
-        this.setState({ images: [...images, ...data.hits] });
-      })
-      .catch(error => console.error(error))
-      .finally(() => {
-        this.setState({ isLOading: false });
-        window.scrollTo({
-          top: scrollHeight,
-          behavior: 'smooth',
-        });
-      });
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.contacts !== this.state.contacts) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+  }
+
+  changeFilter = e => {
+    this.setState({ filter: e.target.value });
   };
 
-  handleOnSubmit = query => {
-    this.setState({ images: [], query, page: 1 });
+  addContact = item => {
+    const { contacts } = this.state;
+
+    const searchExistingContact = contacts.some(
+      contact => contact.name === item.name,
+    );
+
+    if (searchExistingContact === true) {
+      alert(`${item.name} is allready in contact`);
+      return;
+    } else {
+      const contactToAdd = {
+        ...item,
+        id: uuidv4(),
+      };
+      this.setState(state => ({
+        contacts: [...state.contacts, contactToAdd],
+      }));
+    }
   };
 
-  loadMore = () => {
-    const { page } = this.state;
-
-    this.setState({
-      page: page + 1,
-    });
-  };
-
-  getLargeURL = () => {
-    const { images, idImage, isModal } = this.state;
-
-    const item = images.find(({ id }) => id === Number(idImage));
-    return isModal ? item.largeImageURL : '';
-  };
-
-  openModal = e => {
-    this.setState({ isModal: true, idImage: e.target.id });
-  };
-
-  closeModal = () => {
-    this.setState({ isModal: false });
+  deleteContact = id => {
+    this.setState(state => ({
+      contacts: state.contacts.filter(contact => contact.id !== id),
+    }));
   };
 
   render() {
-    const { images, isLOading, isModal } = this.state;
+    const { contacts, filter } = this.state;
 
+    const filteredContacts = filterContacts(contacts, filter);
     return (
-      <div className={styles.App}>
-        <SearchBar onSubmit={this.handleOnSubmit} />
-        <ImageGallery images={images} onClick={this.openModal} />
-        {isLOading && <Loader />}
-        {images.length > 0 && <Button onLoadMore={this.loadMore} />}
-        {isModal && (
-          <Modal onClick={this.closeModal}>
-            <img src={this.getLargeURL()} alt="" />
-          </Modal>
+      <div>
+        <h1>Phonebook</h1>
+        <ContactForm onAddContact={this.addContact} />
+
+        <h2>Contacts</h2>
+        {contacts.length >= 2 && (
+          <Filter value={filter} onChangeFilter={this.changeFilter} />
         )}
+        <ContactList
+          items={filteredContacts}
+          onDeleteContact={this.deleteContact}
+        />
       </div>
     );
   }

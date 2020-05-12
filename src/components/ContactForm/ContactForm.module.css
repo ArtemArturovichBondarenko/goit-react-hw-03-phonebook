@@ -1,0 +1,15 @@
+h2 {
+    margin: 0;
+}
+
+.form {
+    width: 300px;
+    margin: 0;
+    padding: 0px 15px 15px 15px;
+    border: 2px solid grey;
+
+} 
+.button {
+    margin-top: 10px;
+    display: block;
+}

@@ -2,15 +2,13 @@
   "name": "react-group-5",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://ArtemArturovichBondarenko.github.io/goit-react-hw-03-image-finder",
+  "homepage": "https://ArtemArturovichBondarenko.github.io/goit-react-hw-02-phonebook",
   "dependencies": {
-    "axios": "^0.19.2",
     "classnames": "^2.2.6",
     "gh-pages": "^2.0.1",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-loader-spinner": "^3.1.14",
     "react-scripts": "2.1.8",
     "styled-components": "^4.2.0",
     "uuid": "^7.0.3"
